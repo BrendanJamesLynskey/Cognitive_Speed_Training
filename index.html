@@ -1,0 +1,1424 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cognitive Speed Training</title>
+<style>
+:root {
+  --bg: #0f0f13;
+  --surface: #1a1a24;
+  --surface2: #22222f;
+  --border: #2a2a3a;
+  --text: #e0e0e8;
+  --muted: #8888a0;
+  --accent: #6c8cff;
+  --accent2: #ff6c8c;
+  --accent3: #6cffc8;
+  --success: #4cdf7c;
+  --danger: #ff5c6c;
+  --radius: 16px;
+  --radius-sm: 10px;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  line-height: 1.6;
+  overflow-x: hidden;
+}
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 8px; }
+::-webkit-scrollbar-track { background: var(--bg); }
+::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+
+/* Utility */
+.hidden { display: none !important; }
+
+/* Screen transitions */
+.screen {
+  display: none;
+  animation: fadeIn 0.4s ease;
+  min-height: 100vh;
+  padding: 20px;
+}
+.screen.active { display: block; }
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Header */
+.header {
+  text-align: center;
+  padding: 50px 20px 30px;
+}
+.header h1 {
+  font-size: 2.6rem;
+  font-weight: 700;
+  background: linear-gradient(135deg, var(--accent), var(--accent3));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin-bottom: 12px;
+}
+.header .subtitle {
+  color: var(--muted);
+  font-size: 1.15rem;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+/* Nav buttons */
+.nav-bar {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  margin: 20px 0 30px;
+  flex-wrap: wrap;
+  padding: 0 20px;
+}
+.nav-btn {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  color: var(--muted);
+  padding: 10px 22px;
+  border-radius: 30px;
+  cursor: pointer;
+  font-size: 0.95rem;
+  transition: all 0.2s;
+}
+.nav-btn:hover { border-color: var(--accent); color: var(--accent); }
+
+/* Mode cards */
+.modes-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 20px;
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 0 20px 60px;
+}
+.mode-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 28px;
+  cursor: pointer;
+  transition: all 0.3s;
+  position: relative;
+  overflow: hidden;
+}
+.mode-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, var(--accent), var(--accent3));
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+.mode-card:hover { border-color: var(--accent); transform: translateY(-3px); }
+.mode-card:hover::before { opacity: 1; }
+.mode-card .emoji { font-size: 2.4rem; margin-bottom: 12px; display: block; }
+.mode-card h3 { font-size: 1.25rem; margin-bottom: 6px; color: var(--text); }
+.mode-card p { color: var(--muted); font-size: 0.95rem; margin-bottom: 14px; }
+.mode-card .difficulty {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.85rem;
+  color: var(--muted);
+}
+.mode-card .difficulty .dots {
+  display: flex;
+  gap: 3px;
+}
+.mode-card .difficulty .dot {
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  background: var(--border);
+}
+.mode-card .difficulty .dot.filled { background: var(--accent); }
+.mode-card .best-score {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  background: var(--surface2);
+  padding: 4px 10px;
+  border-radius: 12px;
+  font-size: 0.8rem;
+  color: var(--accent3);
+}
+
+/* Buttons */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 14px 32px;
+  border-radius: 12px;
+  border: none;
+  font-size: 1.05rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-family: inherit;
+}
+.btn-primary {
+  background: linear-gradient(135deg, var(--accent), #5a7aee);
+  color: #fff;
+}
+.btn-primary:hover { transform: translateY(-2px); filter: brightness(1.1); }
+.btn-secondary {
+  background: var(--surface2);
+  color: var(--text);
+  border: 1px solid var(--border);
+}
+.btn-secondary:hover { border-color: var(--accent); }
+.btn-back {
+  background: none;
+  border: 1px solid var(--border);
+  color: var(--muted);
+  padding: 10px 20px;
+  border-radius: 10px;
+  cursor: pointer;
+  font-size: 0.95rem;
+  font-family: inherit;
+  transition: all 0.2s;
+}
+.btn-back:hover { border-color: var(--accent); color: var(--text); }
+
+/* Game area shared */
+.game-container {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 20px;
+}
+.game-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+.game-title {
+  font-size: 1.3rem;
+  font-weight: 600;
+}
+
+/* HUD */
+.hud {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+.hud-item {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 8px 16px;
+  text-align: center;
+  min-width: 80px;
+}
+.hud-item .label {
+  font-size: 0.75rem;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+.hud-item .value {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: var(--accent);
+}
+.hud-item .value.streak-fire { color: var(--accent2); }
+
+/* Game arena */
+.arena {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  min-height: 400px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  position: relative;
+  overflow: hidden;
+  margin-bottom: 20px;
+}
+
+/* Countdown overlay */
+.countdown-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(15, 15, 19, 0.92);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 20;
+  font-size: 4rem;
+  font-weight: 700;
+  color: var(--accent);
+  animation: pulse 0.6s ease;
+}
+@keyframes pulse {
+  0% { transform: scale(1.4); opacity: 0; }
+  50% { transform: scale(1); opacity: 1; }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+/* Feedback flash */
+.feedback-correct {
+  animation: flashGreen 0.4s ease;
+}
+@keyframes flashGreen {
+  0% { box-shadow: inset 0 0 0 4px var(--success); }
+  100% { box-shadow: inset 0 0 0 0px transparent; }
+}
+.feedback-wrong {
+  animation: shake 0.4s ease;
+}
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  20% { transform: translateX(-8px); }
+  40% { transform: translateX(8px); }
+  60% { transform: translateX(-6px); }
+  80% { transform: translateX(4px); }
+}
+
+/* Choice buttons */
+.choices {
+  display: flex;
+  gap: 14px;
+  flex-wrap: wrap;
+  justify-content: center;
+  padding: 20px;
+}
+.choice-btn {
+  background: var(--surface2);
+  border: 2px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 16px 24px;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-size: 1rem;
+  color: var(--text);
+  font-family: inherit;
+  min-width: 100px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+.choice-btn:hover { border-color: var(--accent); transform: scale(1.04); }
+.choice-btn.correct-flash { border-color: var(--success); background: rgba(76, 223, 124, 0.15); }
+.choice-btn.wrong-flash { border-color: var(--danger); background: rgba(255, 92, 108, 0.15); }
+
+/* Shapes for visual ID */
+.shape-display {
+  width: 120px;
+  height: 120px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 20px auto;
+}
+.shape-small {
+  width: 40px;
+  height: 40px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+.shape-circle { border-radius: 50%; }
+.shape-square { border-radius: 8px; }
+.shape-triangle {
+  width: 0; height: 0;
+  border-left: 60px solid transparent;
+  border-right: 60px solid transparent;
+  border-bottom: 104px solid currentColor;
+  background: none !important;
+}
+.shape-triangle.shape-small {
+  border-left-width: 20px;
+  border-right-width: 20px;
+  border-bottom-width: 35px;
+}
+.shape-diamond {
+  transform: rotate(45deg);
+  border-radius: 4px;
+}
+.shape-star {
+  font-size: inherit;
+}
+
+/* Peripheral target area for divided attention */
+.peripheral-ring {
+  position: absolute;
+  inset: 20px;
+  pointer-events: none;
+}
+.peripheral-pos {
+  position: absolute;
+  width: 50px;
+  height: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  pointer-events: auto;
+  border-radius: 50%;
+  border: 2px solid var(--border);
+  transition: all 0.2s;
+  font-size: 0.9rem;
+  color: var(--muted);
+}
+.peripheral-pos:hover { border-color: var(--accent); }
+.peripheral-pos.active-target {
+  border-color: var(--accent3);
+  background: rgba(108, 255, 200, 0.15);
+}
+
+/* Visual search grid */
+.search-grid {
+  display: grid;
+  gap: 8px;
+  padding: 20px;
+}
+.search-cell {
+  width: 60px;
+  height: 60px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-size: 1.8rem;
+  border: 2px solid transparent;
+}
+.search-cell:hover { border-color: var(--accent); transform: scale(1.08); }
+
+/* Sequence memory grid */
+.sequence-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  padding: 20px;
+  max-width: 320px;
+}
+.sequence-cell {
+  width: 80px;
+  height: 80px;
+  background: var(--surface2);
+  border: 2px solid var(--border);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.sequence-cell:hover { border-color: var(--accent); }
+.sequence-cell.lit {
+  background: var(--accent) !important;
+  border-color: var(--accent) !important;
+  box-shadow: 0 0 20px rgba(108, 140, 255, 0.4);
+}
+.sequence-cell.player-lit {
+  background: var(--accent3) !important;
+  border-color: var(--accent3) !important;
+}
+
+/* Reaction time target */
+.rt-target {
+  width: 70px;
+  height: 70px;
+  border-radius: 50%;
+  position: absolute;
+  cursor: pointer;
+  transition: transform 0.1s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.4rem;
+}
+.rt-target:hover { transform: scale(1.1); }
+.rt-target.real { background: var(--accent3); }
+.rt-target.distractor { background: var(--accent2); }
+
+/* Progress bar */
+.progress-bar {
+  width: 100%;
+  height: 6px;
+  background: var(--border);
+  border-radius: 3px;
+  overflow: hidden;
+  margin: 10px 0;
+}
+.progress-bar .fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--accent), var(--accent3));
+  border-radius: 3px;
+  transition: width 0.4s ease;
+}
+
+/* Results screen */
+.results {
+  text-align: center;
+  padding: 40px 20px;
+}
+.results h2 {
+  font-size: 2rem;
+  margin-bottom: 8px;
+  color: var(--accent3);
+}
+.results .feedback-msg {
+  color: var(--muted);
+  font-size: 1.1rem;
+  margin-bottom: 30px;
+}
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 16px;
+  max-width: 600px;
+  margin: 0 auto 30px;
+}
+.stat-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 20px;
+}
+.stat-card .stat-value {
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: var(--accent);
+}
+.stat-card .stat-label {
+  font-size: 0.85rem;
+  color: var(--muted);
+  margin-top: 4px;
+}
+
+/* Science section */
+.science-content {
+  max-width: 760px;
+  margin: 0 auto;
+  padding: 20px 20px 60px;
+}
+.science-content h2 {
+  font-size: 1.8rem;
+  margin: 30px 0 16px;
+  color: var(--text);
+}
+.science-content h3 {
+  font-size: 1.2rem;
+  margin: 24px 0 10px;
+  color: var(--accent);
+}
+.science-content p {
+  color: var(--muted);
+  margin-bottom: 14px;
+  font-size: 1.02rem;
+}
+.science-content .reference {
+  font-size: 0.9rem;
+  color: var(--muted);
+  padding: 8px 0;
+  border-bottom: 1px solid var(--border);
+}
+.science-content ul {
+  color: var(--muted);
+  padding-left: 24px;
+  margin-bottom: 14px;
+}
+.science-content li { margin-bottom: 6px; }
+
+/* Why-this-helps panel */
+.why-panel {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  margin: 16px 0;
+  overflow: hidden;
+}
+.why-toggle {
+  width: 100%;
+  background: none;
+  border: none;
+  color: var(--accent);
+  padding: 14px 20px;
+  font-size: 0.95rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-family: inherit;
+}
+.why-toggle:hover { background: var(--surface2); }
+.why-toggle .arrow {
+  transition: transform 0.3s;
+  font-size: 0.8rem;
+}
+.why-toggle.open .arrow { transform: rotate(180deg); }
+.why-body {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.4s ease, padding 0.4s ease;
+  padding: 0 20px;
+}
+.why-body.open {
+  max-height: 500px;
+  padding: 0 20px 16px;
+}
+.why-body p {
+  color: var(--muted);
+  font-size: 0.92rem;
+  margin-bottom: 10px;
+}
+
+/* Mini chart */
+.mini-chart {
+  display: flex;
+  align-items: flex-end;
+  gap: 3px;
+  height: 60px;
+  padding: 10px 0;
+}
+.mini-chart .bar {
+  flex: 1;
+  background: var(--accent);
+  border-radius: 2px 2px 0 0;
+  min-width: 6px;
+  max-width: 16px;
+  transition: height 0.3s;
+  opacity: 0.7;
+}
+.mini-chart .bar:last-child { opacity: 1; }
+
+/* Level display with XP bar */
+.level-display {
+  margin-bottom: 20px;
+}
+.level-display .level-text {
+  font-size: 0.85rem;
+  color: var(--muted);
+  margin-bottom: 4px;
+}
+
+/* Responsive */
+@media (max-width: 600px) {
+  .header h1 { font-size: 1.8rem; }
+  .modes-grid { grid-template-columns: 1fr; }
+  .hud { gap: 8px; }
+  .hud-item { padding: 6px 10px; min-width: 60px; }
+  .hud-item .value { font-size: 1rem; }
+  .choice-btn { padding: 12px 16px; min-width: 80px; }
+  .sequence-cell { width: 65px; height: 65px; }
+  .search-cell { width: 48px; height: 48px; font-size: 1.3rem; }
+}
+</style>
+</head>
+<body>
+
+<!-- ===================== LANDING SCREEN ===================== -->
+<div id="screen-landing" class="screen active">
+  <div class="header">
+    <h1>Cognitive Speed Training</h1>
+    <p class="subtitle">Evidence-based brain training exercises shown to reduce dementia risk. Based on the ACTIVE study and UFOV research.</p>
+  </div>
+  <div class="nav-bar">
+    <button class="nav-btn" onclick="showScreen('screen-science')">The Science</button>
+  </div>
+  <div class="modes-grid" id="modes-grid">
+    <!-- Filled by JS -->
+  </div>
+</div>
+
+<!-- ===================== SCIENCE SCREEN ===================== -->
+<div id="screen-science" class="screen">
+  <div class="science-content">
+    <button class="btn-back" onclick="showScreen('screen-landing')">Back to Training</button>
+    <h2>The Science Behind Speed Training</h2>
+
+    <h3>The ACTIVE Study</h3>
+    <p>The Advanced Cognitive Training for Independent and Vital Elderly (ACTIVE) study is one of the largest and longest randomised controlled trials of cognitive training ever conducted. Beginning in 1998, it enrolled 2,832 healthy older adults (average age 74) across six sites in the United States.</p>
+    <p>Participants were randomly assigned to one of four groups: memory training, reasoning training, speed-of-processing training, or a no-contact control group. Each training group received 10 initial sessions of approximately 60 to 75 minutes each, with booster sessions offered at 11 and 35 months.</p>
+
+    <h3>The Speed Training Advantage</h3>
+    <p>At the 10-year follow-up (Rebok et al., 2014), a remarkable pattern emerged. While all three training groups showed lasting improvements in their trained cognitive abilities, <strong>only the speed-of-processing group showed a reduced risk of dementia</strong>. Participants who completed speed training had a 29% lower risk of dementia compared to the control group (Edwards et al., 2017).</p>
+    <p>This effect was dose-dependent: participants who completed more training sessions showed greater protection. Neither the memory training group nor the reasoning training group showed statistically significant reductions in dementia risk.</p>
+
+    <h3>What Is Speed-of-Processing Training?</h3>
+    <p>Speed-of-processing training is built on the Useful Field of View (UFOV) paradigm developed by Karlene Ball and colleagues. The UFOV measures how quickly and accurately a person can process visual information across their field of view. In training, participants practise identifying and localising briefly presented visual targets, with display durations that adapt to maintain an optimal challenge level.</p>
+    <p>As training progresses, presentation times shorten from hundreds of milliseconds to as little as 20 to 30 milliseconds. This forces the brain's visual processing systems to work faster and more efficiently, expanding the useful field of view and improving processing speed.</p>
+
+    <h3>Why Does It Work?</h3>
+    <p>Speed-of-processing training targets the frontoparietal attention network, which governs how quickly and efficiently we process, filter, and respond to visual information. This network shows early vulnerability in preclinical dementia. By strengthening these neural circuits, speed training may build cognitive reserve, helping the brain maintain function even as age-related changes accumulate.</p>
+    <p>The training also produces transfer effects to everyday activities. ACTIVE study participants who received speed training showed significantly fewer difficulties with instrumental activities of daily living, such as managing finances, using the telephone, and preparing meals (Willis et al., 2006).</p>
+
+    <h3>Key References</h3>
+    <div class="reference">Ball, K., Berch, D. B., Helmers, K. F., et al. (2002). Effects of cognitive training interventions with older adults: A randomized controlled trial. <em>JAMA</em>, 288(18), 2271-2281.</div>
+    <div class="reference">Willis, S. L., Tennstedt, S. L., Marsiske, M., et al. (2006). Long-term effects of cognitive training on everyday functional outcomes in older adults. <em>JAMA</em>, 296(23), 2805-2814.</div>
+    <div class="reference">Rebok, G. W., Ball, K., Guey, L. T., et al. (2014). Ten-year effects of the Advanced Cognitive Training for Independent and Vital Elderly cognitive training trial on cognition and everyday functioning in older adults. <em>Journal of the American Geriatrics Society</em>, 62(1), 16-24.</div>
+    <div class="reference">Edwards, J. D., Xu, H., Clark, D. O., et al. (2017). Speed of processing training results in lower risk of dementia. <em>Alzheimer's &amp; Dementia: Translational Research &amp; Clinical Interventions</em>, 3(4), 603-611.</div>
+    <div class="reference">Karbach, J., &amp; Verhaeghen, P. (2014). Making working memory work: A meta-analysis of executive-control and working memory training in older adults. <em>Psychological Science</em>, 25(11), 2027-2037.</div>
+    <div class="reference">Deary, I. J., &amp; Der, G. (2005). Reaction time, age, and cognitive ability: Longitudinal findings from age 16 to 63 years in representative population samples. <em>Aging, Neuropsychology, and Cognition</em>, 12(2), 187-215.</div>
+  </div>
+</div>
+
+<!-- ===================== GAME SCREEN (shared) ===================== -->
+<div id="screen-game" class="screen">
+  <div class="game-container">
+    <div class="game-header">
+      <button class="btn-back" id="btn-quit">Quit</button>
+      <div class="game-title" id="game-title"></div>
+    </div>
+    <div class="hud" id="game-hud"></div>
+    <div class="level-display" id="level-display">
+      <div class="level-text" id="level-text"></div>
+      <div class="progress-bar"><div class="fill" id="level-fill" style="width:0%"></div></div>
+    </div>
+    <div class="arena" id="game-arena"></div>
+    <div id="game-why"></div>
+  </div>
+</div>
+
+<!-- ===================== RESULTS SCREEN ===================== -->
+<div id="screen-results" class="screen">
+  <div class="results" id="results-content"></div>
+</div>
+
+<script>
+// ============================== STATE ==============================
+const MODES = [
+  {
+    id: 'rapid', name: 'Rapid Visual Identification', emoji: '👁️',
+    desc: 'Identify a briefly flashed shape. Display time adapts to your skill.',
+    difficulty: 2, target: 'Visual processing speed',
+    whyTitle: 'Why this helps',
+    whyHTML: `<p>This exercise is based on the Useful Field of View (UFOV) paradigm developed by Karlene Ball and colleagues. By practising rapid identification of briefly presented visual targets, you train your brain to process visual information faster and more accurately.</p>
+<p>The ACTIVE study (Ball et al., 2002; Rebok et al., 2014) demonstrated that just 10 sessions of this type of speed-of-processing training produced cognitive benefits that lasted at least 10 years. Crucially, Edwards et al. (2017) found that participants who completed speed training had a 29% reduced risk of dementia compared to controls.</p>
+<p>As the display time decreases, your visual system is pushed to extract information more efficiently, strengthening the neural circuits responsible for rapid visual processing. This is the core mechanism behind the observed protective effect.</p>`
+  },
+  {
+    id: 'divided', name: 'Divided Attention', emoji: '🎯',
+    desc: 'Identify a central object while locating a peripheral target.',
+    difficulty: 3, target: 'Divided attention & UFOV',
+    whyTitle: 'Why this helps',
+    whyHTML: `<p>This mode extends the Useful Field of View task by requiring you to split your attention between the centre and periphery of your visual field. The "useful field of view" is the area from which you can extract information in a single glance — it shrinks with age and shrinks even more in early dementia.</p>
+<p>Edwards et al. (2017) specifically demonstrated that training to expand the useful field of view reduced dementia risk. The divided attention component forces your brain to process multiple sources of information simultaneously, which is critical for real-world activities like driving, navigating crowded environments, and maintaining situational awareness.</p>
+<p>By practising this dual-task, you strengthen the frontoparietal attention network and improve your ability to distribute cognitive resources efficiently across your visual field.</p>`
+  },
+  {
+    id: 'search', name: 'Visual Search', emoji: '🔍',
+    desc: 'Find the odd item in a grid. The grid grows as you improve.',
+    difficulty: 2, target: 'Selective attention & scanning',
+    whyTitle: 'Why this helps',
+    whyHTML: `<p>Visual search tasks require you to rapidly scan a display, filter out irrelevant items, and identify a target. This engages the frontoparietal attention network — the same network that shows early vulnerability in preclinical Alzheimer's disease and other dementias.</p>
+<p>Research has shown that visual search efficiency declines with age, and this decline is accelerated in individuals who go on to develop dementia. By practising efficient visual search, you are exercising the attentional control systems that help maintain cognitive function.</p>
+<p>As the grid size increases, the demand on selective attention and processing speed grows. This progressive challenge ensures that your brain continues to be pushed at its optimal learning zone, maximising the training benefit.</p>`
+  },
+  {
+    id: 'sequence', name: 'Sequence Memory', emoji: '🧠',
+    desc: 'Remember and reproduce increasingly long sequences at increasing speed.',
+    difficulty: 3, target: 'Working memory & speed',
+    whyTitle: 'Why this helps',
+    whyHTML: `<p>This mode combines working memory demands with processing speed pressure — a dual-task approach that research suggests produces broader cognitive benefits. Karbach and Verhaeghen (2014) conducted a meta-analysis showing that dual-task training (combining working memory with speed demands) produces greater transfer effects than either type of training alone.</p>
+<p>As sequences grow longer and faster, your brain must encode, maintain, and retrieve information under increasing time pressure. This challenges the prefrontal cortex and its connections to sensory areas, building the kind of flexible cognitive control that supports everyday function.</p>
+<p>The ACTIVE study showed that cognitive training benefits transfer to instrumental activities of daily living. The combination of memory and speed demands in this task mirrors the real-world cognitive challenges of following multi-step directions, managing daily routines, and keeping track of ongoing tasks.</p>`
+  },
+  {
+    id: 'reaction', name: 'Reaction Time', emoji: '⚡',
+    desc: 'Click targets fast, but avoid the distractors. Tests speed and inhibitory control.',
+    difficulty: 1, target: 'Reaction time & inhibition',
+    whyTitle: 'Why this helps',
+    whyHTML: `<p>Reaction time is one of the strongest cognitive predictors of both mortality and dementia risk. Deary and Der (2005) demonstrated in a large longitudinal study that slower and more variable reaction times predict cognitive decline and increased mortality risk across the adult lifespan.</p>
+<p>The go/no-go component of this task — clicking real targets while avoiding distractors — adds an inhibitory control demand. Inhibitory control is a core executive function that declines early in many neurodegenerative conditions. Training this ability helps maintain the prefrontal control systems that govern impulsive responding.</p>
+<p>By tracking your reaction time across sessions, you can monitor one of the most sensitive indicators of your processing speed. Improvements in reaction time reflect genuine enhancements in neural processing efficiency, and this measure is used in clinical research as a key outcome variable.</p>`
+  }
+];
+
+const SHAPES = ['circle','square','diamond','star'];
+const COLORS = ['#6c8cff','#ff6c8c','#6cffc8','#ffd76c','#c86cff'];
+const COLOR_NAMES = ['Blue','Pink','Green','Gold','Purple'];
+const STAR_CHAR = '\u2605';
+
+let state = loadState();
+let currentMode = null;
+let gameActive = false;
+let trialTimer = null;
+let session = {};
+
+function defaultModeState() {
+  return { bestScore: 0, bestStreak: 0, totalTrials: 0, totalCorrect: 0, sessionsPlayed: 0, recentAccuracies: [] };
+}
+
+function loadState() {
+  try {
+    const s = JSON.parse(localStorage.getItem('cogspeed_state'));
+    if (s && s.modes) return s;
+  } catch(e) {}
+  const s = { modes: {} };
+  MODES.forEach(m => s.modes[m.id] = defaultModeState());
+  return s;
+}
+
+function saveState() {
+  localStorage.setItem('cogspeed_state', JSON.stringify(state));
+}
+
+// ============================== SCREENS ==============================
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  if (id === 'screen-landing') renderModeCards();
+}
+
+function renderModeCards() {
+  const grid = document.getElementById('modes-grid');
+  grid.innerHTML = MODES.map(m => {
+    const ms = state.modes[m.id] || defaultModeState();
+    const dots = Array.from({length: 3}, (_, i) => `<div class="dot ${i < m.difficulty ? 'filled' : ''}"></div>`).join('');
+    const best = ms.bestScore > 0 ? `<div class="best-score">Best: ${ms.bestScore}</div>` : '';
+    return `<div class="mode-card" onclick="startMode('${m.id}')">
+      ${best}
+      <span class="emoji">${m.emoji}</span>
+      <h3>${m.name}</h3>
+      <p>${m.desc}</p>
+      <div class="difficulty"><span>Difficulty</span><div class="dots">${dots}</div></div>
+    </div>`;
+  }).join('');
+}
+
+// ============================== GAME ENGINE ==============================
+function startMode(modeId) {
+  currentMode = MODES.find(m => m.id === modeId);
+  if (!state.modes[modeId]) state.modes[modeId] = defaultModeState();
+  session = {
+    score: 0, streak: 0, trials: 0, correct: 0, startTime: Date.now(),
+    reactionTimes: [], level: 1, xp: 0,
+    // mode-specific
+    displayTime: 500, gridSize: 3, seqLen: 3, seqSpeed: 600,
+    // rolling accuracy for adaptive difficulty
+    recentResults: []
+  };
+  gameActive = true;
+  showScreen('screen-game');
+  document.getElementById('game-title').textContent = currentMode.emoji + ' ' + currentMode.name;
+  document.getElementById('btn-quit').onclick = () => { gameActive = false; clearTimeout(trialTimer); showScreen('screen-landing'); };
+  renderWhyPanel();
+  runCountdown(() => nextTrial());
+}
+
+function renderWhyPanel() {
+  const el = document.getElementById('game-why');
+  el.innerHTML = `<div class="why-panel">
+    <button class="why-toggle" onclick="toggleWhy(this)">${currentMode.whyTitle} <span class="arrow">&#9660;</span></button>
+    <div class="why-body">${currentMode.whyHTML}</div>
+  </div>`;
+}
+
+function toggleWhy(btn) {
+  btn.classList.toggle('open');
+  btn.nextElementSibling.classList.toggle('open');
+}
+
+function updateHUD() {
+  const streakText = session.streak >= 5 ? session.streak + ' \uD83D\uDD25' : session.streak;
+  const streakClass = session.streak >= 5 ? 'streak-fire' : '';
+  const ms = state.modes[currentMode.id];
+  let extra = '';
+  if (currentMode.id === 'rapid' || currentMode.id === 'divided') {
+    extra = `<div class="hud-item"><div class="label">Display</div><div class="value">${session.displayTime}ms</div></div>`;
+  } else if (currentMode.id === 'search') {
+    extra = `<div class="hud-item"><div class="label">Grid</div><div class="value">${session.gridSize}x${session.gridSize}</div></div>`;
+  } else if (currentMode.id === 'sequence') {
+    extra = `<div class="hud-item"><div class="label">Length</div><div class="value">${session.seqLen}</div></div>`;
+  } else if (currentMode.id === 'reaction') {
+    const avg = session.reactionTimes.length ? Math.round(session.reactionTimes.reduce((a,b)=>a+b,0)/session.reactionTimes.length) : '-';
+    extra = `<div class="hud-item"><div class="label">Avg RT</div><div class="value">${avg}ms</div></div>`;
+  }
+  document.getElementById('game-hud').innerHTML = `
+    <div class="hud-item"><div class="label">Score</div><div class="value">${session.score}</div></div>
+    <div class="hud-item"><div class="label">Streak</div><div class="value ${streakClass}">${streakText}</div></div>
+    <div class="hud-item"><div class="label">Best</div><div class="value">${ms.bestScore}</div></div>
+    ${extra}
+  `;
+  const pct = Math.min(100, (session.xp % 100));
+  document.getElementById('level-text').textContent = `Level ${session.level}`;
+  document.getElementById('level-fill').style.width = pct + '%';
+}
+
+function runCountdown(cb) {
+  const arena = document.getElementById('game-arena');
+  let count = 3;
+  function tick() {
+    if (!gameActive) return;
+    if (count <= 0) { cb(); return; }
+    arena.innerHTML = `<div class="countdown-overlay" style="animation:pulse 0.5s ease">${count}</div>`;
+    count--;
+    trialTimer = setTimeout(tick, 600);
+  }
+  tick();
+}
+
+function addXP(amount) {
+  session.xp += amount;
+  while (session.xp >= 100) {
+    session.xp -= 100;
+    session.level++;
+  }
+}
+
+function recordResult(correct) {
+  session.trials++;
+  session.recentResults.push(correct ? 1 : 0);
+  if (session.recentResults.length > 10) session.recentResults.shift();
+  if (correct) {
+    session.correct++;
+    session.streak++;
+    let points = 10 + session.streak * 2;
+    session.score += points;
+    addXP(points);
+  } else {
+    session.streak = 0;
+  }
+  adaptDifficulty();
+  updateHUD();
+}
+
+function adaptDifficulty() {
+  if (session.recentResults.length < 5) return;
+  const acc = session.recentResults.reduce((a,b) => a+b, 0) / session.recentResults.length;
+
+  if (currentMode.id === 'rapid' || currentMode.id === 'divided') {
+    if (acc > 0.85 && session.displayTime > 30) {
+      session.displayTime = Math.max(30, Math.round(session.displayTime * 0.88));
+    } else if (acc < 0.6 && session.displayTime < 800) {
+      session.displayTime = Math.min(800, Math.round(session.displayTime * 1.15));
+    }
+  } else if (currentMode.id === 'search') {
+    if (acc > 0.85 && session.gridSize < 6) session.gridSize++;
+    else if (acc < 0.5 && session.gridSize > 3) session.gridSize--;
+  } else if (currentMode.id === 'sequence') {
+    if (acc > 0.85) { session.seqLen++; session.seqSpeed = Math.max(200, session.seqSpeed - 40); }
+    else if (acc < 0.5 && session.seqLen > 2) { session.seqLen--; session.seqSpeed = Math.min(800, session.seqSpeed + 40); }
+  }
+}
+
+function flashFeedback(correct) {
+  const arena = document.getElementById('game-arena');
+  arena.classList.remove('feedback-correct', 'feedback-wrong');
+  void arena.offsetWidth;
+  arena.classList.add(correct ? 'feedback-correct' : 'feedback-wrong');
+}
+
+function nextTrial() {
+  if (!gameActive) return;
+  if (session.trials >= 20) { endSession(); return; }
+  updateHUD();
+  switch (currentMode.id) {
+    case 'rapid': trialRapid(); break;
+    case 'divided': trialDivided(); break;
+    case 'search': trialSearch(); break;
+    case 'sequence': trialSequence(); break;
+    case 'reaction': trialReaction(); break;
+  }
+}
+
+function endSession() {
+  gameActive = false;
+  const ms = state.modes[currentMode.id];
+  ms.totalTrials += session.trials;
+  ms.totalCorrect += session.correct;
+  ms.sessionsPlayed++;
+  if (session.score > ms.bestScore) ms.bestScore = session.score;
+  if (session.streak > ms.bestStreak) ms.bestStreak = session.streak;
+  const acc = session.trials > 0 ? Math.round(session.correct / session.trials * 100) : 0;
+  ms.recentAccuracies.push(acc);
+  if (ms.recentAccuracies.length > 20) ms.recentAccuracies.shift();
+  saveState();
+  showResults();
+}
+
+function showResults() {
+  showScreen('screen-results');
+  const ms = state.modes[currentMode.id];
+  const acc = session.trials > 0 ? Math.round(session.correct / session.trials * 100) : 0;
+  const isNewBest = session.score >= ms.bestScore;
+  let feedback = '';
+  if (acc >= 90) feedback = 'Outstanding performance! Your processing speed is exceptional.';
+  else if (acc >= 75) feedback = 'Great work! You\'re training at the optimal challenge level.';
+  else if (acc >= 60) feedback = 'Good effort! The adaptive difficulty is pushing you just right.';
+  else feedback = 'Keep practising! Each session strengthens your neural pathways.';
+  if (isNewBest && session.score > 0) feedback = 'New personal best! ' + feedback;
+
+  // Mini chart
+  const accs = ms.recentAccuracies;
+  const maxAcc = Math.max(...accs, 1);
+  const bars = accs.map(a => `<div class="bar" style="height:${Math.max(4, a/maxAcc*100)}%"></div>`).join('');
+
+  let avgRT = '';
+  if (session.reactionTimes.length) {
+    const avg = Math.round(session.reactionTimes.reduce((a,b)=>a+b,0)/session.reactionTimes.length);
+    avgRT = `<div class="stat-card"><div class="stat-value">${avg}ms</div><div class="stat-label">Avg Reaction Time</div></div>`;
+  }
+
+  document.getElementById('results-content').innerHTML = `
+    <h2>${currentMode.emoji} Session Complete</h2>
+    <p class="feedback-msg">${feedback}</p>
+    <div class="stats-grid">
+      <div class="stat-card"><div class="stat-value">${session.score}</div><div class="stat-label">Score</div></div>
+      <div class="stat-card"><div class="stat-value">${acc}%</div><div class="stat-label">Accuracy</div></div>
+      <div class="stat-card"><div class="stat-value">${session.correct}/${session.trials}</div><div class="stat-label">Correct</div></div>
+      <div class="stat-card"><div class="stat-value">Lv ${session.level}</div><div class="stat-label">Level Reached</div></div>
+      ${avgRT}
+    </div>
+    ${accs.length > 1 ? `<p style="color:var(--muted);font-size:0.9rem;margin-bottom:6px;">Accuracy over recent sessions</p><div class="mini-chart">${bars}</div>` : ''}
+    <div style="margin-top:30px;display:flex;gap:14px;justify-content:center;flex-wrap:wrap;">
+      <button class="btn btn-primary" onclick="startMode('${currentMode.id}')">Play Again</button>
+      <button class="btn btn-secondary" onclick="showScreen('screen-landing')">Back to Modes</button>
+    </div>
+  `;
+}
+
+// ============================== MODE 1: RAPID VISUAL ID ==============================
+function makeShapeHTML(shape, color, size) {
+  const s = size || 120;
+  if (shape === 'star') {
+    return `<div style="font-size:${s*0.8}px;color:${color};line-height:1;">${STAR_CHAR}</div>`;
+  }
+  if (shape === 'triangle') {
+    const bw = Math.round(s * 0.45);
+    const bh = Math.round(s * 0.78);
+    return `<div style="width:0;height:0;border-left:${bw}px solid transparent;border-right:${bw}px solid transparent;border-bottom:${bh}px solid ${color};"></div>`;
+  }
+  const radius = shape === 'circle' ? '50%' : shape === 'diamond' ? '6px' : '12px';
+  const transform = shape === 'diamond' ? 'rotate(45deg)' : 'none';
+  const ds = shape === 'diamond' ? s * 0.7 : s;
+  return `<div style="width:${ds}px;height:${ds}px;background:${color};border-radius:${radius};transform:${transform};"></div>`;
+}
+
+function makeShapeLabel(shape, colorIdx) {
+  return `${COLOR_NAMES[colorIdx]} ${shape.charAt(0).toUpperCase() + shape.slice(1)}`;
+}
+
+function trialRapid() {
+  const arena = document.getElementById('game-arena');
+  const shapeIdx = Math.floor(Math.random() * SHAPES.length);
+  const colorIdx = Math.floor(Math.random() * COLORS.length);
+  const correctShape = SHAPES[shapeIdx];
+  const correctColor = COLORS[colorIdx];
+  const correctLabel = makeShapeLabel(correctShape, colorIdx);
+
+  // Show shape
+  arena.innerHTML = `<div style="display:flex;align-items:center;justify-content:center;width:100%;height:100%;">${makeShapeHTML(correctShape, correctColor, 120)}</div>`;
+
+  // Hide after display time
+  trialTimer = setTimeout(() => {
+    if (!gameActive) return;
+    // Generate options (2-4 based on difficulty)
+    const numChoices = Math.min(4, 2 + Math.floor(session.level / 3));
+    let options = [{ shape: correctShape, colorIdx, label: correctLabel }];
+    while (options.length < numChoices) {
+      const s = SHAPES[Math.floor(Math.random() * SHAPES.length)];
+      const c = Math.floor(Math.random() * COLORS.length);
+      const lbl = makeShapeLabel(s, c);
+      if (!options.find(o => o.label === lbl)) {
+        options.push({ shape: s, colorIdx: c, label: lbl });
+      }
+    }
+    options = shuffle(options);
+
+    arena.innerHTML = `<div style="padding:30px;text-align:center;">
+      <p style="color:var(--muted);margin-bottom:20px;font-size:1.1rem;">What was the shape?</p>
+      <div class="choices">${options.map(o =>
+        `<button class="choice-btn" data-label="${o.label}" onclick="answerRapid(this,'${correctLabel}')">${makeShapeHTML(o.shape, COLORS[o.colorIdx], 36)} ${o.label}</button>`
+      ).join('')}</div>
+    </div>`;
+  }, session.displayTime);
+}
+
+function answerRapid(btn, correct) {
+  if (!gameActive) return;
+  const chosen = btn.getAttribute('data-label');
+  const isCorrect = chosen === correct;
+  recordResult(isCorrect);
+  flashFeedback(isCorrect);
+
+  // Highlight correct/wrong
+  document.querySelectorAll('.choice-btn').forEach(b => {
+    b.onclick = null;
+    if (b.getAttribute('data-label') === correct) b.classList.add('correct-flash');
+    else if (b === btn && !isCorrect) b.classList.add('wrong-flash');
+  });
+
+  trialTimer = setTimeout(() => nextTrial(), 800);
+}
+
+// ============================== MODE 2: DIVIDED ATTENTION ==============================
+function trialDivided() {
+  const arena = document.getElementById('game-arena');
+  arena.style.minHeight = '450px';
+
+  const shapeIdx = Math.floor(Math.random() * SHAPES.length);
+  const colorIdx = Math.floor(Math.random() * COLORS.length);
+  const correctShape = SHAPES[shapeIdx];
+  const correctColor = COLORS[colorIdx];
+  const correctLabel = makeShapeLabel(correctShape, colorIdx);
+
+  // Peripheral target position (0-7, like clock positions)
+  const periPos = Math.floor(Math.random() * 8);
+  const periLabels = ['Top', 'Top-Right', 'Right', 'Bottom-Right', 'Bottom', 'Bottom-Left', 'Left', 'Top-Left'];
+
+  // Position coordinates for 8 peripheral positions
+  const positions = [
+    { top: '5%', left: '50%', transform: 'translate(-50%,0)' },
+    { top: '10%', right: '10%', transform: 'none' },
+    { top: '50%', right: '5%', transform: 'translateY(-50%)' },
+    { bottom: '10%', right: '10%', transform: 'none' },
+    { bottom: '5%', left: '50%', transform: 'translate(-50%,0)' },
+    { bottom: '10%', left: '10%', transform: 'none' },
+    { top: '50%', left: '5%', transform: 'translateY(-50%)' },
+    { top: '10%', left: '10%', transform: 'none' },
+  ];
+
+  // Show central shape + peripheral marker
+  const periStyle = Object.entries(positions[periPos]).map(([k,v]) => `${k}:${v}`).join(';');
+  arena.innerHTML = `
+    <div style="display:flex;align-items:center;justify-content:center;width:100%;height:100%;position:relative;min-height:400px;">
+      ${makeShapeHTML(correctShape, correctColor, 100)}
+      <div style="position:absolute;${periStyle};width:40px;height:40px;background:var(--accent3);border-radius:50%;opacity:0.9;"></div>
+    </div>`;
+
+  trialTimer = setTimeout(() => {
+    if (!gameActive) return;
+    // Phase 1: identify central shape
+    const numChoices = Math.min(4, 2 + Math.floor(session.level / 3));
+    let options = [{ shape: correctShape, colorIdx, label: correctLabel }];
+    while (options.length < numChoices) {
+      const s = SHAPES[Math.floor(Math.random() * SHAPES.length)];
+      const c = Math.floor(Math.random() * COLORS.length);
+      const lbl = makeShapeLabel(s, c);
+      if (!options.find(o => o.label === lbl)) options.push({ shape: s, colorIdx: c, label: lbl });
+    }
+    options = shuffle(options);
+
+    arena.innerHTML = `<div style="padding:20px;text-align:center;">
+      <p style="color:var(--muted);margin-bottom:16px;font-size:1.05rem;">Step 1: What was the central shape?</p>
+      <div class="choices">${options.map(o =>
+        `<button class="choice-btn" data-label="${o.label}" onclick="answerDivided1(this,'${correctLabel}',${periPos})">${makeShapeHTML(o.shape, COLORS[o.colorIdx], 32)} ${o.label}</button>`
+      ).join('')}</div>
+    </div>`;
+  }, session.displayTime);
+}
+
+let dividedPhase1Correct = false;
+
+function answerDivided1(btn, correct, periPos) {
+  if (!gameActive) return;
+  const chosen = btn.getAttribute('data-label');
+  dividedPhase1Correct = chosen === correct;
+
+  document.querySelectorAll('.choice-btn').forEach(b => {
+    b.onclick = null;
+    if (b.getAttribute('data-label') === correct) b.classList.add('correct-flash');
+    else if (b === btn && !dividedPhase1Correct) b.classList.add('wrong-flash');
+  });
+
+  setTimeout(() => {
+    if (!gameActive) return;
+    // Phase 2: where was the peripheral target?
+    const arena = document.getElementById('game-arena');
+    const periLabels = ['Top', 'Top-Right', 'Right', 'Bottom-Right', 'Bottom', 'Bottom-Left', 'Left', 'Top-Left'];
+    const angles = [270, 315, 0, 45, 90, 135, 180, 225];
+
+    let posHTML = '';
+    for (let i = 0; i < 8; i++) {
+      const angle = angles[i] * Math.PI / 180;
+      const r = 42;
+      const x = 50 + r * Math.cos(angle);
+      const y = 50 + r * Math.sin(angle);
+      posHTML += `<div class="peripheral-pos" onclick="answerDivided2(this,${i},${periPos})"
+        style="left:${x}%;top:${y}%;transform:translate(-50%,-50%);font-size:0.75rem;">${periLabels[i]}</div>`;
+    }
+
+    arena.innerHTML = `<div style="width:100%;height:100%;position:relative;min-height:400px;">
+      <p style="text-align:center;color:var(--muted);padding-top:20px;font-size:1.05rem;">Step 2: Where was the peripheral target?</p>
+      ${posHTML}
+    </div>`;
+  }, 600);
+}
+
+function answerDivided2(el, chosen, correct) {
+  if (!gameActive) return;
+  const posCorrect = chosen === correct;
+  const bothCorrect = dividedPhase1Correct && posCorrect;
+  recordResult(bothCorrect);
+  flashFeedback(bothCorrect);
+
+  document.querySelectorAll('.peripheral-pos').forEach(p => {
+    p.onclick = null;
+    const idx = parseInt(p.getAttribute('onclick')?.match(/,(\d+),/)?.[1] || -1);
+  });
+  el.style.borderColor = posCorrect ? 'var(--success)' : 'var(--danger)';
+  el.style.background = posCorrect ? 'rgba(76,223,124,0.2)' : 'rgba(255,92,108,0.2)';
+
+  // Highlight correct position
+  document.querySelectorAll('.peripheral-pos').forEach((p, idx) => {
+    p.onclick = null;
+    if (idx === correct) {
+      p.classList.add('active-target');
+    }
+  });
+
+  trialTimer = setTimeout(() => nextTrial(), 900);
+}
+
+// ============================== MODE 3: VISUAL SEARCH ==============================
+function trialSearch() {
+  const arena = document.getElementById('game-arena');
+  const gs = session.gridSize;
+  const items = [];
+
+  // Pick base emoji set
+  const emojiSets = [
+    ['🟦','🟥'], ['🔵','🔴'], ['🟢','🟡'], ['🟪','🟧'],
+    ['◆','◇'], ['●','○'], ['■','□']
+  ];
+  const setIdx = Math.floor(Math.random() * emojiSets.length);
+  const baseEmoji = emojiSets[setIdx][0];
+  const oddEmoji = emojiSets[setIdx][1];
+
+  const oddPos = Math.floor(Math.random() * gs * gs);
+
+  for (let i = 0; i < gs * gs; i++) {
+    items.push(i === oddPos ? oddEmoji : baseEmoji);
+  }
+
+  // Show grid briefly
+  const cellSize = gs <= 4 ? 60 : (gs <= 5 ? 52 : 44);
+  const displayTime = Math.max(400, 1200 - session.level * 60);
+
+  arena.innerHTML = `<div class="search-grid" style="grid-template-columns:repeat(${gs},${cellSize}px);">
+    ${items.map((item, i) => `<div class="search-cell" style="width:${cellSize}px;height:${cellSize}px;background:var(--surface2);font-size:${cellSize*0.5}px;">${item}</div>`).join('')}
+  </div>`;
+
+  trialTimer = setTimeout(() => {
+    if (!gameActive) return;
+    // Hide content, show clickable grid
+    arena.innerHTML = `<div style="text-align:center;">
+      <p style="color:var(--muted);margin-bottom:16px;font-size:1.05rem;">Where was the odd one out?</p>
+      <div class="search-grid" style="grid-template-columns:repeat(${gs},${cellSize}px);margin:0 auto;">
+        ${items.map((_, i) => `<div class="search-cell" onclick="answerSearch(this,${i},${oddPos})"
+          style="width:${cellSize}px;height:${cellSize}px;background:var(--surface2);cursor:pointer;border:2px solid var(--border);">?</div>`).join('')}
+      </div>
+    </div>`;
+  }, displayTime);
+}
+
+function answerSearch(cell, chosen, correct) {
+  if (!gameActive) return;
+  const isCorrect = chosen === correct;
+  recordResult(isCorrect);
+  flashFeedback(isCorrect);
+
+  document.querySelectorAll('.search-cell').forEach((c, i) => {
+    c.onclick = null;
+    if (i === correct) { c.style.borderColor = 'var(--success)'; c.style.background = 'rgba(76,223,124,0.2)'; c.textContent = '✓'; }
+    else if (i === chosen && !isCorrect) { c.style.borderColor = 'var(--danger)'; c.style.background = 'rgba(255,92,108,0.2)'; c.textContent = '✗'; }
+  });
+
+  trialTimer = setTimeout(() => nextTrial(), 800);
+}
+
+// ============================== MODE 4: SEQUENCE MEMORY ==============================
+function trialSequence() {
+  const arena = document.getElementById('game-arena');
+  const len = session.seqLen;
+  const seq = [];
+  for (let i = 0; i < len; i++) {
+    let n;
+    do { n = Math.floor(Math.random() * 9); } while (seq.length > 0 && seq[seq.length-1] === n);
+    seq.push(n);
+  }
+
+  // Render grid
+  arena.innerHTML = `<div style="text-align:center;padding:20px;">
+    <p style="color:var(--muted);margin-bottom:16px;">Watch the sequence...</p>
+    <div class="sequence-grid" style="margin:0 auto;" id="seq-grid">
+      ${Array.from({length:9}, (_, i) => `<div class="sequence-cell" data-idx="${i}"></div>`).join('')}
+    </div>
+  </div>`;
+
+  // Play sequence
+  let step = 0;
+  function playStep() {
+    if (!gameActive) return;
+    if (step >= seq.length) {
+      // Player's turn
+      setTimeout(() => promptSequence(seq), 300);
+      return;
+    }
+    const cells = document.querySelectorAll('.sequence-cell');
+    cells.forEach(c => c.classList.remove('lit'));
+    cells[seq[step]].classList.add('lit');
+    step++;
+    trialTimer = setTimeout(() => {
+      cells.forEach(c => c.classList.remove('lit'));
+      trialTimer = setTimeout(playStep, 150);
+    }, session.seqSpeed);
+  }
+  trialTimer = setTimeout(playStep, 400);
+}
+
+function promptSequence(seq) {
+  if (!gameActive) return;
+  const arena = document.getElementById('game-arena');
+  const playerSeq = [];
+
+  arena.innerHTML = `<div style="text-align:center;padding:20px;">
+    <p style="color:var(--accent);margin-bottom:16px;">Your turn! Reproduce the sequence (${seq.length} items)</p>
+    <div class="sequence-grid" style="margin:0 auto;" id="seq-grid">
+      ${Array.from({length:9}, (_, i) => `<div class="sequence-cell" data-idx="${i}" id="seq-cell-${i}"></div>`).join('')}
+    </div>
+    <p style="color:var(--muted);margin-top:12px;font-size:0.9rem;" id="seq-progress">0 / ${seq.length}</p>
+  </div>`;
+
+  document.querySelectorAll('.sequence-cell').forEach(cell => {
+    cell.onclick = () => {
+      if (!gameActive) return;
+      const idx = parseInt(cell.dataset.idx);
+      playerSeq.push(idx);
+
+      // Flash the cell
+      cell.classList.add('player-lit');
+      setTimeout(() => cell.classList.remove('player-lit'), 200);
+
+      document.getElementById('seq-progress').textContent = `${playerSeq.length} / ${seq.length}`;
+
+      // Check if wrong
+      if (playerSeq[playerSeq.length - 1] !== seq[playerSeq.length - 1]) {
+        // Wrong
+        recordResult(false);
+        flashFeedback(false);
+        // Show correct sequence
+        document.querySelectorAll('.sequence-cell').forEach(c => c.onclick = null);
+        seq.forEach((s, i) => {
+          setTimeout(() => {
+            document.getElementById('seq-cell-' + s)?.classList.add('lit');
+          }, i * 300);
+        });
+        trialTimer = setTimeout(() => nextTrial(), seq.length * 300 + 600);
+        return;
+      }
+
+      // Check if complete
+      if (playerSeq.length === seq.length) {
+        recordResult(true);
+        flashFeedback(true);
+        document.querySelectorAll('.sequence-cell').forEach(c => c.onclick = null);
+        trialTimer = setTimeout(() => nextTrial(), 800);
+      }
+    };
+  });
+}
+
+// ============================== MODE 5: REACTION TIME ==============================
+let rtTrialCount = 0;
+let rtStartTime = 0;
+
+function trialReaction() {
+  const arena = document.getElementById('game-arena');
+  arena.style.position = 'relative';
+  arena.innerHTML = `<p style="color:var(--muted);font-size:1.1rem;">Get ready...</p>`;
+
+  const delay = 800 + Math.random() * 2000;
+
+  trialTimer = setTimeout(() => {
+    if (!gameActive) return;
+
+    // Decide: target or distractor first? Show 1-3 items
+    const numItems = Math.min(3, 1 + Math.floor(session.level / 3));
+    const hasDistractor = session.level >= 2 && Math.random() > 0.3;
+
+    let html = '';
+    const usedPositions = [];
+
+    function randPos() {
+      let x, y, attempts = 0;
+      do {
+        x = 15 + Math.random() * 65;
+        y = 15 + Math.random() * 65;
+        attempts++;
+      } while (attempts < 20 && usedPositions.some(p => Math.abs(p.x-x) < 15 && Math.abs(p.y-y) < 15));
+      usedPositions.push({x, y});
+      return { x, y };
+    }
+
+    // Always have one real target
+    const tp = randPos();
+    html += `<div class="rt-target real" style="left:${tp.x}%;top:${tp.y}%;transform:translate(-50%,-50%);" onclick="answerReaction(this,true)">✓</div>`;
+
+    if (hasDistractor) {
+      const dp = randPos();
+      html += `<div class="rt-target distractor" style="left:${dp.x}%;top:${dp.y}%;transform:translate(-50%,-50%);" onclick="answerReaction(this,false)">✗</div>`;
+    }
+
+    arena.innerHTML = `<div style="width:100%;height:100%;position:relative;min-height:350px;">
+      <p style="position:absolute;top:8px;left:50%;transform:translateX(-50%);color:var(--muted);font-size:0.85rem;">Click the <span style="color:var(--accent3);">green</span> target${hasDistractor ? ', avoid <span style="color:var(--accent2);">red</span>!' : '!'}</p>
+      ${html}
+    </div>`;
+
+    rtStartTime = performance.now();
+  }, delay);
+}
+
+function answerReaction(el, isReal) {
+  if (!gameActive) return;
+  const rt = Math.round(performance.now() - rtStartTime);
+
+  if (isReal) {
+    session.reactionTimes.push(rt);
+    recordResult(true);
+    flashFeedback(true);
+    // Show RT on target
+    el.innerHTML = rt + 'ms';
+    el.style.fontSize = '0.85rem';
+    el.style.fontWeight = '700';
+  } else {
+    recordResult(false);
+    flashFeedback(false);
+    el.innerHTML = 'Miss!';
+    el.style.fontSize = '0.85rem';
+  }
+
+  document.querySelectorAll('.rt-target').forEach(t => t.onclick = null);
+  trialTimer = setTimeout(() => nextTrial(), 900);
+}
+
+// ============================== UTILITIES ==============================
+function shuffle(arr) {
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+// Init
+renderModeCards();
+</script>
+</body>
+</html>
